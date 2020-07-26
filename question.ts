@@ -31,7 +31,12 @@ export class TelegrafQuestion {
         return user.session
       }
 
-      ctx.question = async (text: string) => {
+      ctx.question = async (
+        text: string,
+        options: {
+          ttl?: number
+        } = {},
+      ) => {
         await ctx.reply(text)
         await ctx.setSession({ stage: text, question: true })
 
@@ -44,6 +49,13 @@ export class TelegrafQuestion {
             res(v)
             this.emitter.removeAllListeners(String(ctx.from.id))
           })
+
+          if (options.ttl) {
+            setTimeout(() => {
+              rej('TelegrafQuestion: Event has expired')
+              this.emitter.removeAllListeners(String(ctx.from.id))
+            }, options.ttl)
+          }
         })
       }
 
