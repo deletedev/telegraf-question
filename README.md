@@ -22,7 +22,7 @@ bot.command('name', async (ctx) => {
 ```
 
 ```javascript
-const question = new TelegrafQuestion({...params})
+const question = new TelegrafQuestion({...options})
 ```
 
 Параметры:
