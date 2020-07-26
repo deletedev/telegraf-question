@@ -5,7 +5,7 @@ export class TelegrafQuestion {
   private emitter: EventEmitter
   private shouldBeText: string
 
-  constructor(options: { shouldBeText?: string }) {
+  constructor(options: { shouldBeText?: string } = {}) {
     const EventEmitter = require('events'),
       emitter = new EventEmitter()
 
