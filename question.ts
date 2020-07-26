@@ -3,12 +3,17 @@ import { UserModel } from '../models'
 
 export class TelegrafQuestion {
   private emitter: EventEmitter
+  private shouldBeText: string
 
-  constructor() {
+  constructor(options: { shouldBeText?: string }) {
     const EventEmitter = require('events'),
       emitter = new EventEmitter()
 
     this.emitter = emitter
+
+    if (options.shouldBeText) {
+      this.shouldBeText = options.shouldBeText
+    }
   }
 
   middleware() {
@@ -42,15 +47,22 @@ export class TelegrafQuestion {
         })
       }
 
-      if (ctx.dbuser.session.question && ctx?.message?.text) {
-        this.emitter.emit(
-          String(ctx.from.id),
-          ctx.message.text,
-          ctx.from.id,
-          ctx.dbuser.session.stage,
-        )
+      if (ctx.dbuser.session.question) {
+        if (ctx?.message?.text) {
+          this.emitter.emit(
+            String(ctx.from.id),
+            ctx.message.text,
+            ctx.from.id,
+            ctx.dbuser.session.stage,
+          )
 
-        await ctx.setSession({ stage: 'default', question: false })
+          await ctx.setSession({ stage: 'default', question: false })
+        } else {
+          if (this.shouldBeText) {
+            await ctx.reply(this.shouldBeText)
+          }
+        }
+
         return
       }
 
