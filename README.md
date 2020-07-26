@@ -1,4 +1,4 @@
-# telegraf-question (webhook ONLY)
+# telegraf-question
 Example:
 
 ```javascript
