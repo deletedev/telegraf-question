@@ -9,7 +9,9 @@ const bot = new Telegraf(process.env.BOT_TOKEN, {
   telegram: { webhookReply: false },
 })
 
-const question = new TelegrafQuestion()
+const question = new TelegrafQuestion({
+  shouldBeText: 'Вы должны прислать текст!'
+})
 bot.use(question.middleware())
 
 bot.command('name', async (ctx) => {
@@ -18,3 +20,11 @@ bot.command('name', async (ctx) => {
 })
 
 ```
+
+```javascript
+const question = new TelegrafQuestion({...params})
+```
+
+Параметры:
+
+- shouldBeText: если задан, строка переданная в параметре отправится юзеру, если он в ответ на вопрос пришлет сообщение, не содержащее текст
