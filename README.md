@@ -30,7 +30,7 @@ const question = new TelegrafQuestion({...options})
 - **shouldBeText** - если задан, строка переданная в параметре отправится юзеру, если он в ответ на вопрос пришлет сообщение, не содержащее текст
 
 ```javascript
-ctx.question('question', {...options})
+await ctx.question('question', {...options})
 ```
 
 Параметры:
