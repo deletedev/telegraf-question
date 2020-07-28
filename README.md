@@ -1,5 +1,5 @@
 # telegraf-question
-Example:
+# Example:
 
 ```javascript
 import Telegraf from 'telegraf'
@@ -20,7 +20,7 @@ bot.command('name', async (ctx) => {
 })
 
 ```
-
+# API
 ```javascript
 const question = new TelegrafQuestion({...options})
 ```
