@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events'
+import { Context, Extra } from 'telegraf'
+import { ExtraReplyMessage } from 'telegraf/typings/telegram-types'
 import { UserModel } from '../models'
 
 export class TelegrafQuestion {
@@ -17,10 +19,10 @@ export class TelegrafQuestion {
   }
 
   middleware() {
-    return async (ctx, next) => {
-      ctx.setSession = async ({ stage, question }) => {
+    return async (ctx: Context, next) => {
+      ctx.setSession = async ({ quest, question }) => {
         const user = await UserModel.findOne({ telegramId: ctx.from.id })
-        user.session.stage = stage
+        user.session.quest = quest
         user.session.question = question
 
         await user.save()
@@ -35,14 +37,15 @@ export class TelegrafQuestion {
         text: string,
         options: {
           ttl?: number
+          extra?: ExtraReplyMessage
         } = {},
       ) => {
-        await ctx.reply(text)
-        await ctx.setSession({ stage: text, question: true })
+        await ctx.reply(text, options.extra)
+        await ctx.setSession({ quest: text, question: true })
 
         return new Promise((res, rej) => {
-          this.emitter.on(String(ctx.from.id), async (v, user, stage) => {
-            if (stage !== text || ctx.from.id !== user) {
+          this.emitter.on(String(ctx.from.id), async (v, user, quest) => {
+            if (quest !== text || ctx.from.id !== user) {
               return
             }
 
@@ -60,15 +63,15 @@ export class TelegrafQuestion {
       }
 
       if (ctx.dbuser.session.question) {
-        if (ctx?.message?.text) {
+        if (ctx?.message?.text || ctx?.message?.caption) {
           this.emitter.emit(
             String(ctx.from.id),
-            ctx.message.text,
+            ctx.message,
             ctx.from.id,
-            ctx.dbuser.session.stage,
+            ctx.dbuser.session.quest,
           )
 
-          await ctx.setSession({ stage: 'default', question: false })
+          await ctx.setSession({ quest: 'default', question: false })
         } else {
           if (this.shouldBeText) {
             await ctx.reply(this.shouldBeText)
